@@ -8,8 +8,8 @@ import time
 
 import os
 
-api_key = os.getenv("OPENAI_API_KEY")
-print("API KEY: \n"+api_key)
+api_key = os.getenv("OPENAI_API_KEY","0")
+#print("API KEY: \n"+api_key)
 
 app = FastAPI()
 
