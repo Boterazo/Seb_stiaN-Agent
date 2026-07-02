@@ -3,3 +3,4 @@ openai==2.44.0
 python-dotenv==1.2.2
 twilio==9.10.1
 unicorn
+python-multipart
