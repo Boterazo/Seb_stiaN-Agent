@@ -37,6 +37,12 @@ def dividir_texto(texto, limite=1500):
     partes.append(texto)
     return partes
 
+def Enviar_msg_pensando(msg, tel):
+    client_TW.messages.create(
+        from_='whatsapp:+14155238886',
+        body=str(msg),
+        to=str(tel)
+    )
 
 @app.post("/whatsapp")
 async def webhook(request: Request):
@@ -57,6 +63,8 @@ async def webhook(request: Request):
         f"\nmensaje_usuario: {mensaje_usuario}\n"
         f"numero_usuario: {numero_usuario}\n"
     )
+
+	Enviar_msg_pensando("Pensando...", numero_usuario)
 
     inicio = time.time()
 
