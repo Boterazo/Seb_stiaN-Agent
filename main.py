@@ -1,7 +1,4 @@
-# para correr el server se usa:
-# uvicorn main:app --reload
 
-# En otra terminal ejecuta: ngrok http 8000
 from twilio.rest import Client
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import Response
@@ -9,11 +6,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 from openai import OpenAI
 import time
 
-
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 print("API KEY: \n"+api_key)
 
@@ -56,6 +50,7 @@ async def webhook(request: Request):
         print(f"{key}: {value}")
 	'''
     mensaje_usuario = form_data["Body"]
+    mensaje_usuario = str(mensaje_usuario)
     numero_usuario = form_data["From"]
 
     print(
@@ -73,7 +68,12 @@ async def webhook(request: Request):
                 "content": [
                     {
                         "type": "input_text",
-                        "text": "Eres mi asistente te dare unos documentos y envase a eso me ayudaras a gestionar dudas respecto a clientes que me contactan, mi línea es chat y necesito saber que procedimientos hacer de forma concisa para dar solución a el problema, saber cuando tengo que gestionar yo el procedimiento o cuando tengo que conferir, transferir o agendar una llamada al area encargada.\n\nLas líneas son: whatsApp (chats), llamadas, quejas y reclamos, fidelizacion, les basica, les konecta, etc.\n\nLas conferencias se hacen desde la línea telefónica.\n\nLas transferencia por chat solo son dos que se pueden hacer, línea de quejas y reclamos, línea de colombianos en el exterior.\n\nLas transferencias por llamadas no tienen limites así que se puede conferir o transferir sin inconveniente.\n\nMe tienes que decir de primero que linea lo atiende, recuerda que soy de chats, despues una descripcion de la solucion y si hay un procedimiento de como hacerlo ponerlo tambien.\n\nSi ves que existe una forma de obtener la informacion atraves de AS400 pones los pasos, si no hay pasos solo ignora esta regla."
+                        "text": """- Descripción general\nEres mi asistente, te daré documentos y con base en ellos me ayudarás a gestionar dudas de los clientes que me contactan, mi canal principal es chat (WhatsApp), necesito saber qué procedimientos realizar de forma concisa para dar solución a los problemas, identificar cuándo debo gestionarlos directamente y cuándo debo conferir,
+                         transferir o agendar una llamada al área encargada.\n- Líneas de atención\nWhatsApp (chats), llamadas, quejas y reclamos, fidelización, les básica, les konecta, soporte crédito hipotecario, Cardif, referidos, Sura, asistencias AXA, leasing, televenta Bancolombia, fiduciaria Bancolombia, entre otras.\n- Conferencias y transferencias\nLas conferencias se realizan únicamente desde la línea telefónica, 
+                         las transferencias por chat (WhatsApp) solo se permiten en dos casos: línea de quejas y reclamos, línea de colombianos en el exterior, si no es posible transferir o conferir desde WhatsApp se debe agendar una llamada, las transferencias por llamadas no tienen límite y se pueden realizar sin inconveniente, las conferencias solo se realizan por llamada.
+                         \n- Procedimiento de respuesta\nPrimero indicar si el caso lo atiendo yo (chat WhatsApp), si se transfiere o si se confiere, después dar una descripción de la solución, si existe un procedimiento incluirlo paso a paso, sugerir un código de tipificación según el archivo “codificacion.docx” (solo se puede usar un código pero se pueden recomendar máximo tres), 
+                         si la solución requiere radicar el proceso incluir el paso a paso, si no hay requerimiento dentro de la solución no se incluye nada adicional, si la información se puede obtener a través de AS400 poner los pasos, si no aplica escribir “AS400 no aplica”.\n- Notas adicionales\nAS400 es una herramienta de consultas en consola de comandos, sucursal virtual personas es un aplicativo web de Bancolombia, 
+                         sucursal virtual personas es la página web de Bancolombia para los usuarios y se abrevia SVP, gestor transaccional es una herramienta también, es un aplicativo pero para los agentes de Bancolombia, TD es tarjeta débito, TDC es tarjeta de crédito, CxC es cuentas por cobrar."""
                     }
                 ]
             },
@@ -101,7 +101,7 @@ async def webhook(request: Request):
             {
                 "type": "file_search",
                 "vector_store_ids": [
-                    "vs_6a416bb7cb5c81919833f8e8f56932b2"
+                    "vs_6a4472c79fdc8191bee1d8968140255e"
                 ]
             }
         ],
@@ -123,34 +123,7 @@ async def webhook(request: Request):
         client_TW.messages.create(
             from_='whatsapp:+14155238886',
             body=parte,
-            to=numero_usuario
+            to=str(numero_usuario)
         )
 
     return {"info": "ENVIADO"}
-
-
-# para correr el server se usa uvicorn main:app --reload
-
-# Arranca tu servidor FastAPI:
-# uvicorn main:app --reload
-
-# usa esto para autenticarte:
-# ngrok config add-authtoken TU_TOKEN
-
-# En otra terminal ejecuta:
-# ngrok http 8000
-
-# ngrok te dará algo así:
-# https://a1b2c3d4.ngrok.io
-
-# Entonces en Twilio debes poner:
-# https://a1b2c3d4.ngrok.io/whatsapp
-
-'''
-¿Qué es ngrok?
-
-Es una herramienta que crea un túnel seguro desde internet hacia tu computador.
-Hace que tu servidor local (localhost) tenga una URL pública para que servicios como Twilio puedan conectarse.
-
-pagina: https://dashboard.ngrok.com/get-started/setup/windows
-'''
